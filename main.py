@@ -16,8 +16,6 @@ import structlog
 import uvicorn
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import FileResponse
-from fastapi.staticfiles import StaticFiles
 
 from app.config import get_settings
 from app.database import AsyncSessionLocal, init_db
@@ -126,11 +124,6 @@ def create_app() -> FastAPI:
     app.include_router(session_router.router)
     app.include_router(status_router.router)
     app.include_router(webhook_router.router)
-    app.mount("/static", StaticFiles(directory="app/static"), name="static")
-
-    @app.get("/")
-    async def home():
-        return FileResponse("app/static/index.html")
 
     @app.get("/health")
     async def health():

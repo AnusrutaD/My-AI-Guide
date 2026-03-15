@@ -317,6 +317,14 @@ EVALUATOR_MODEL=qwen2.5-coder:7b
 CHECKPOINTER_BACKEND=postgres
 ```
 
+### 12.5 Frontend (Next.js Phase 2 workspace) setup
+
+```bash
+cd frontend
+cp .env.example .env.local
+npm install
+```
+
 ---
 
 ## 13. Runbook
@@ -327,8 +335,18 @@ Start app:
 make dev
 ```
 
-Use UI:
-- Open `http://localhost:8000/`
+Start frontend (Phase 2 interactive workspace):
+
+```bash
+cd frontend
+npm run dev
+```
+
+Frontend URL:
+- Open `http://localhost:3000/`
+
+Main backend URL (APIs only now):
+- `http://localhost:8000/health`
 
 Mock start:
 

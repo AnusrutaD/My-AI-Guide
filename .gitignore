@@ -43,6 +43,14 @@ Thumbs.db
 *.log
 *.tmp
 *.pid
+*.out
+
+# Node / Next.js
+node_modules/
+.next/
+out/
+.turbo/
+frontend/.env.local
 
 # Local runtime/checkpoint artifacts
 /tmp/
