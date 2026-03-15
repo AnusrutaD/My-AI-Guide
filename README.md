@@ -91,29 +91,29 @@ It provides:
 
 ```mermaid
 flowchart LR
-    User[User: UI / WhatsApp / API] --> FastAPI[FastAPI Server]
-    FastAPI --> SessionRouter[/session router]
-    FastAPI --> WebhookRouter[/webhook router]
-    FastAPI --> StatusRouter[/status router]
+    User["User (UI / WhatsApp / API)"] --> FastAPI["FastAPI Server"]
+    FastAPI --> SessionRouter["Session Router"]
+    FastAPI --> WebhookRouter["Webhook Router"]
+    FastAPI --> StatusRouter["Status Router"]
 
-    SessionRouter --> Graph[LangGraph State Machine]
+    SessionRouter --> Graph["LangGraph State Machine"]
     WebhookRouter --> Graph
-    StatusRouter --> DB[(PostgreSQL + pgvector)]
+    StatusRouter --> DB["PostgreSQL + pgvector"]
 
-    Graph --> Strategist[Strategist Node]
-    Graph --> Scraper[Trend Scraper Node]
-    Graph --> QuestionSetter[Question Setter Node]
-    Graph --> Evaluator[Evaluator Node]
+    Graph --> Strategist["Strategist Node"]
+    Graph --> Scraper["Trend Scraper Node"]
+    Graph --> QuestionSetter["Question Setter Node"]
+    Graph --> Evaluator["Evaluator Node"]
 
     Strategist --> DB
     Evaluator --> DB
-    Scraper --> Tavily[Tavily Search]
+    Scraper --> Tavily["Tavily Search"]
 
-    Strategist --> Ollama[Ollama LLMs]
+    Strategist --> Ollama["Ollama LLMs"]
     QuestionSetter --> Ollama
     Evaluator --> Ollama
 
-    Graph --> Checkpointer[LangGraph Checkpointer]
+    Graph --> Checkpointer["LangGraph Checkpointer"]
     Checkpointer --> DB
 ```
 
