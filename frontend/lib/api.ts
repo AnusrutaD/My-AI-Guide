@@ -18,6 +18,22 @@ export type StartSessionResponse = {
   topic: string;
   subtopic: string;
   difficulty: string;
+  question_type?: string;
+  test_cases?: Array<{ input: string; expected: string }>;
+};
+
+export type ExecuteRequest = {
+  language: string;
+  code: string;
+  stdin: string;
+};
+
+export type ExecuteResponse = {
+  stdout: string;
+  stderr: string;
+  code: number | null;
+  signal: string | null;
+  run_error?: string | null;
 };
 
 export type RespondSessionRequest = {
@@ -111,6 +127,15 @@ export async function fetchDailyStatus(
     { cache: "no-store" },
   );
   return readJson<DailyStatusResponse>(res);
+}
+
+export async function executeCode(body: ExecuteRequest): Promise<ExecuteResponse> {
+  const res = await fetch(`${API_BASE_URL}/execute/run`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body),
+  });
+  return readJson<ExecuteResponse>(res);
 }
 
 export { API_BASE_URL };

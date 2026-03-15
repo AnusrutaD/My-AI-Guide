@@ -58,8 +58,11 @@ Return a JSON object:
   "prompt": "<full question text with all constraints>",
   "hints": ["<hint revealed only if user asks>"],
   "expected_time_minutes": <int>,
-  "evaluation_focus": ["<key thing the evaluator should look for>"]
+  "evaluation_focus": ["<key thing the evaluator should look for>"],
+  "test_cases": [{"input": "<stdin input>", "expected": "<expected stdout>"}]
 }
+
+For CODING questions only: include 2-4 test_cases. Each test case has "input" (what goes to stdin) and "expected" (exact expected stdout, trimmed). For SYSTEM_DESIGN or DEBUGGING, use "test_cases": [].
 
 Return ONLY the JSON. No prose.
 """

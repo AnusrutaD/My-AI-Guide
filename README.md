@@ -52,9 +52,11 @@ It provides:
 - **Session APIs** for start/respond/history/state
 - **Daily status tracking** via REST and WhatsApp command (`status`)
 - **Next.js frontend** at `http://localhost:3000` with:
+  - **Coding playground** (LeetCode-style): Monaco editor, language selector (Python, JS, Java, C++, Go, Rust, etc.), Run (sample) / Run All Tests, pass/fail results, Submit for Evaluation
   - Theme switcher (light/dark) via Context API
   - Loading spinners on all action buttons
   - Modern button animations (press/hover feedback)
+- **Code execution** via Piston API (backend proxy at `POST /execute/run`)
 - **Mock webhook** for end-to-end testing without Twilio
 
 ---
@@ -262,6 +264,9 @@ classDiagram
 ### Status
 - `GET /status/daily/{user_id}?hours=24`
 
+### Execute (Coding Playground)
+- `POST /execute/run` — Run code with stdin (proxies to Piston API). Body: `{ language, code, stdin }`.
+
 ### Webhook
 - `POST /webhook/whatsapp` (Twilio)
 - `POST /webhook/mock` (local testing)
@@ -330,6 +335,7 @@ npm install
 ```
 
 Frontend features:
+- **Coding playground**: LeetCode-style editor with Monaco, language selector (Python, JavaScript, Java, C++, Go, Rust, TypeScript, C#, Kotlin), Run (sample test cases), Run All Tests, pass/fail count, Submit for Evaluation. Test cases come from the question (LLM-generated for CODING questions).
 - **Theme switcher**: Light/dark mode toggle (Context API, persisted in `localStorage`)
 - **Loading states**: Spinners on Start Challenge, Submit, Clarify, Hint, etc.
 - **Button UX**: Scale-on-press and hover transitions for clear click feedback
@@ -454,12 +460,12 @@ make install
 │   │   └── nodes/
 │   ├── models/
 │   ├── prompts/
-│   ├── routers/
+│   ├── routers/          # session, status, webhook, execute
 │   ├── services/
 │   └── (static UI removed; see frontend/)
 ├── frontend/
 │   ├── app/
-│   │   ├── components/     # Button, Spinner, ThemeToggle
+│   │   ├── components/     # Button, CodingPlayground, Spinner, ThemeToggle
 │   │   ├── context/        # ThemeContext
 │   │   ├── layout.tsx
 │   │   ├── page.tsx

@@ -2,6 +2,8 @@
 
 import { useMemo, useState } from "react";
 import { Button } from "@/app/components/Button";
+import { CodingPlayground } from "@/app/components/CodingPlayground";
+import type { TestCase } from "@/app/components/CodingPlayground";
 import { ThemeToggle } from "@/app/components/ThemeToggle";
 import {
   fetchDailyStatus,
@@ -54,6 +56,8 @@ export default function Home() {
   const [topic, setTopic] = useState("-");
   const [subtopic, setSubtopic] = useState("-");
   const [stage, setStage] = useState("-");
+  const [questionType, setQuestionType] = useState<string>("CODING");
+  const [testCases, setTestCases] = useState<TestCase[]>([]);
   const [loadingAction, setLoadingAction] = useState<string | null>(null);
 
   const canRespond = useMemo(
@@ -92,6 +96,13 @@ export default function Home() {
         setQuestion(data.question_text);
         setTopic(data.topic || "-");
         setSubtopic(data.subtopic || "-");
+        setQuestionType(data.question_type || "CODING");
+        setTestCases(
+          (data.test_cases ?? []).map((tc) => ({
+            input: tc.input ?? "",
+            expected: tc.expected ?? "",
+          })),
+        );
         setStage("testing");
         setFeedback("Challenge generated. Ask clarifications or submit your solution.");
       } catch (e) {
@@ -137,10 +148,10 @@ export default function Home() {
     });
   }
 
-  async function handleSubmit() {
+  async function handleSubmit(submission?: string) {
     if (!canRespond) return;
-    const submission = answer.trim();
-    if (!submission) {
+    const toSubmit = (submission ?? answer).trim();
+    if (!toSubmit) {
       setFeedback("Please add your solution before submitting.");
       return;
     }
@@ -149,7 +160,7 @@ export default function Home() {
         const data = await respondSession({
           user_id: userId.trim(),
           thread_id: threadId.trim(),
-          response: submission,
+          response: toSubmit,
         });
         setFeedback(data.feedback);
         setStage("idle");
@@ -309,23 +320,36 @@ export default function Home() {
           </div>
 
           <div className="rounded-xl border border-slate-200 bg-slate-50 p-3 sm:p-4 dark:border-slate-800 dark:bg-slate-900">
-            <h2 className="text-base font-semibold">Final Solution Submission</h2>
-            <textarea
-              value={answer}
-              onChange={(e) => setAnswer(e.target.value)}
-              placeholder="Paste your final code / system design answer..."
-              className="mt-3 min-h-36 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm transition-colors focus:border-blue-500 sm:min-h-44 dark:border-slate-700 dark:bg-slate-950 dark:focus:border-blue-400"
-            />
-            <Button
-              variant="success"
-              onClick={handleSubmit}
-              disabled={!canRespond}
-              loading={loadingAction === "submit"}
-              loadingLabel="Submitting..."
-              className="mt-3 w-full sm:w-auto"
-            >
-              Submit for Evaluation
-            </Button>
+            <h2 className="text-base font-semibold">
+              {questionType === "CODING" ? "Coding Playground" : "Final Solution Submission"}
+            </h2>
+            {questionType === "CODING" ? (
+              <div className="mt-3">
+                <CodingPlayground
+                  testCases={testCases}
+                  onSubmitCode={(code) => handleSubmit(code)}
+                />
+              </div>
+            ) : (
+              <>
+                <textarea
+                  value={answer}
+                  onChange={(e) => setAnswer(e.target.value)}
+                  placeholder="Paste your system design / debugging answer..."
+                  className="mt-3 min-h-36 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm transition-colors focus:border-blue-500 sm:min-h-44 dark:border-slate-700 dark:bg-slate-950 dark:focus:border-blue-400"
+                />
+                <Button
+                  variant="success"
+                  onClick={() => handleSubmit()}
+                  disabled={!canRespond}
+                  loading={loadingAction === "submit"}
+                  loadingLabel="Submitting..."
+                  className="mt-3 w-full sm:w-auto"
+                >
+                  Submit for Evaluation
+                </Button>
+              </>
+            )}
           </div>
         </section>
 

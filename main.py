@@ -20,6 +20,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.config import get_settings
 from app.database import AsyncSessionLocal, init_db
 from app.graph.workflow import build_graph, get_checkpointer
+from app.routers import execute as execute_router
 from app.routers import session as session_router
 from app.routers import status as status_router
 from app.routers import webhook as webhook_router
@@ -124,6 +125,7 @@ def create_app() -> FastAPI:
     app.include_router(session_router.router)
     app.include_router(status_router.router)
     app.include_router(webhook_router.router)
+    app.include_router(execute_router.router)
 
     @app.get("/health")
     async def health():

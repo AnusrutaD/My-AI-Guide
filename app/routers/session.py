@@ -37,6 +37,14 @@ class StartSessionResponse(BaseModel):
     topic: str
     subtopic: str
     difficulty: str
+    question_type: str = Field(
+        default="CODING",
+        description="CODING | SYSTEM_DESIGN | DEBUGGING",
+    )
+    test_cases: list[dict[str, str]] = Field(
+        default_factory=list,
+        description="For CODING: [{input, expected}] for run/submit",
+    )
 
 
 class RespondRequest(BaseModel):
@@ -104,12 +112,17 @@ async def start_session(body: StartSessionRequest, request: Request):
         raise HTTPException(status_code=500, detail=str(exc)) from exc
 
     question_text = final_state.get("question_text") or "No question generated — check logs."
+    current_question = final_state.get("current_question") or {}
+    test_cases = current_question.get("test_cases") or []
+    question_type = current_question.get("question_type", "CODING")
     return StartSessionResponse(
         thread_id=thread_id,
         question_text=question_text,
         topic=final_state.get("current_topic", "Unknown"),
         subtopic=final_state.get("current_subtopic", "general"),
         difficulty=final_state.get("suggested_difficulty", "HARD"),
+        question_type=question_type,
+        test_cases=test_cases,
     )
 
 

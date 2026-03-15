@@ -76,6 +76,8 @@ async def question_setter_node(state: AgentState) -> AgentState:
             if raw.startswith("json"):
                 raw = raw[4:]
         question_json: dict = json.loads(raw.strip())
+        if "test_cases" not in question_json:
+            question_json["test_cases"] = []
     except (json.JSONDecodeError, IndexError) as exc:
         logger.warning("[QuestionSetter] JSON parse failed: %s — using raw text as prompt", exc)
         question_json = {
@@ -85,6 +87,7 @@ async def question_setter_node(state: AgentState) -> AgentState:
             "hints": [],
             "expected_time_minutes": 30,
             "evaluation_focus": ["correctness", "complexity", "edge cases"],
+            "test_cases": [],
         }
 
     question_text = _render_question(question_json)
