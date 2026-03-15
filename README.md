@@ -51,7 +51,10 @@ It provides:
 - **Ollama-first LLM mode** for personal, low-cost/local execution
 - **Session APIs** for start/respond/history/state
 - **Daily status tracking** via REST and WhatsApp command (`status`)
-- **Interactive local UI** at `/`
+- **Next.js frontend** at `http://localhost:3000` with:
+  - Theme switcher (light/dark) via Context API
+  - Loading spinners on all action buttons
+  - Modern button animations (press/hover feedback)
 - **Mock webhook** for end-to-end testing without Twilio
 
 ---
@@ -263,9 +266,10 @@ classDiagram
 - `POST /webhook/whatsapp` (Twilio)
 - `POST /webhook/mock` (local testing)
 
-### Health/UI
+### Health
 - `GET /health`
-- `GET /` (UI)
+
+> **UI**: The interactive workspace runs in the Next.js frontend at `http://localhost:3000`. The backend at `http://localhost:8000` serves APIs only.
 
 ---
 
@@ -317,13 +321,18 @@ EVALUATOR_MODEL=qwen2.5-coder:7b
 CHECKPOINTER_BACKEND=postgres
 ```
 
-### 12.5 Frontend (Next.js Phase 2 workspace) setup
+### 12.5 Frontend (Next.js workspace) setup
 
 ```bash
 cd frontend
 cp .env.example .env.local
 npm install
 ```
+
+Frontend features:
+- **Theme switcher**: Light/dark mode toggle (Context API, persisted in `localStorage`)
+- **Loading states**: Spinners on Start Challenge, Submit, Clarify, Hint, etc.
+- **Button UX**: Scale-on-press and hover transitions for clear click feedback
 
 ---
 
@@ -447,7 +456,18 @@ make install
 │   ├── prompts/
 │   ├── routers/
 │   ├── services/
-│   └── static/
+│   └── (static UI removed; see frontend/)
+├── frontend/
+│   ├── app/
+│   │   ├── components/     # Button, Spinner, ThemeToggle
+│   │   ├── context/        # ThemeContext
+│   │   ├── layout.tsx
+│   │   ├── page.tsx
+│   │   └── globals.css
+│   ├── lib/
+│   │   └── api.ts
+│   ├── package.json
+│   └── next.config.ts
 ├── alembic/
 ├── scripts/
 ├── main.py
@@ -464,4 +484,5 @@ If you are onboarding new contributors:
 - Start with this README and run `make setup`.
 - Use `/webhook/mock` for rapid local debugging.
 - Keep prompts version-controlled and review changes carefully, because prompt drift changes evaluation behavior.
+- **README updates**: When adding features (UI, API, config), update this README accordingly.
 
